@@ -1,0 +1,2 @@
+#pragma once
+#define INPUT_DIR "@INPUT_DIR@/"
