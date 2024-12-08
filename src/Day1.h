@@ -52,7 +52,7 @@ private:
         }
 
         utility::PrintDetails(version, utility::Part::first);
-        std::cout << sFirstPartResultString << result << "\n";
+        std::cout << result << "\n";
     };
 
     void PerformSecond() override
@@ -80,7 +80,7 @@ private:
         }
 
         utility::PrintDetails(version, utility::Part::second);
-        std::cout << sSecondPartResultString << result << "\n";
+        std::cout << result << "\n";
     };
 
 private:

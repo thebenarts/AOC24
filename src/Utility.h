@@ -14,6 +14,24 @@ class AbstractDay;
 
 namespace utility
 {
+    template<typename T>
+    concept IsOrderingOperation = requires(T)
+    {
+        std::is_same_v<T, std::greater<>> || std::is_same_v<T, std::less<>>;
+    };
+
+    template<typename T>
+    concept IsInt32Range = requires(T) {
+        std::ranges::input_range<T>&& std::convertible_to<std::remove_cvref_t<std::remove_pointer_t<std::ranges::range_value_t<T>>>, int32_t>;
+    };
+
+    template<typename T>
+    concept IsDayAndHasDayString = requires(T)
+    {
+        std::derived_from<T, AbstractDay>;
+        std::same_as<std::remove_cvref_t<decltype(T::sDay)>, std::string_view>;
+    };
+
     constexpr std::string_view sReleaseFileName{ "input.txt" };
     constexpr std::string_view sTestFileName{ "test.txt" };
 
@@ -43,13 +61,6 @@ namespace utility
         {Part::both, "Both"}
     };
 
-
-    template<typename T>
-    concept IsDayAndHasDayString = requires(T)
-    {
-        requires std::derived_from<T, AbstractDay>;
-        requires std::same_as<std::remove_cvref_t<decltype(T::sDay)>, std::string_view>;
-    };
 
     template<IsDayAndHasDayString T, InputVersion sInputVersion = InputVersion::release>
     class InputReader
