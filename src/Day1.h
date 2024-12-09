@@ -72,7 +72,7 @@ private:
             }
 
             currentNumber = firstSideNumber;
-            auto [lowerBound, upperBound] {std::equal_range(secondListNextLowerBoundIterator, mSecondNumbers.end(), currentNumber)};
+            const auto [lowerBound, upperBound] {std::equal_range(secondListNextLowerBoundIterator, mSecondNumbers.end(), currentNumber)};
             currentNumberCount = currentNumber.value() * std::distance(lowerBound, upperBound);
 
             result += currentNumberCount;

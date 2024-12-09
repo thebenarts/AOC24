@@ -68,6 +68,7 @@ namespace day2::helper
             const auto reportSize{ report.size() };
             for (int i = 0; i < reportSize; i++)
             {
+                // Doesn't matter that we take the first element out on the first iteration as a safe report should stay safe no matter what element we remove.
                 auto filteredView{ report | std::ranges::views::filter([i, report](auto&& value) { return &value != &report[i]; }) };
                 if (Validate(filteredView))
                 {
@@ -115,7 +116,7 @@ private:
 
     void PerformFirst() override
     {
-        int32_t result{ static_cast<int32_t>(std::ranges::count_if(mReports,
+        const int32_t result{ static_cast<int32_t>(std::ranges::count_if(mReports,
             [this](std::span<int32_t> report) { return day2::helper::Validate(report); })) };
         utility::PrintDetails(version, utility::Part::first);
         std::cout << result << '\n';
@@ -123,7 +124,7 @@ private:
 
     void PerformSecond() override
     {
-        int32_t result{ static_cast<int32_t>(std::ranges::count_if(mReports,
+        const int32_t result{ static_cast<int32_t>(std::ranges::count_if(mReports,
             [this](std::span<int32_t> report) { return day2::helper::Validate(report, day2::helper::Dampener{}); })) };
         utility::PrintDetails(version, utility::Part::second);
         std::cout << result << "\n";
