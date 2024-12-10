@@ -1,5 +1,6 @@
 #pragma once
 #include "Utility.h"
+#include <chrono>
 
 static constexpr std::string_view sFirstPartResultString{ "First Part Result : " };
 static constexpr std::string_view sSecondPartResultString{ "Second Part Result : " };
@@ -49,10 +50,19 @@ class DayWrapper
 public:
     void Perform()
     {
+        const auto testStart{ std::chrono::high_resolution_clock::now() };
         Day<utility::InputVersion::test> testVersion;
         testVersion.Perform(utility::Part::both);
+        const auto testEnd{ std::chrono::high_resolution_clock::now() };
+        std::chrono::nanoseconds testDurationInMilliseconds{ testEnd - testStart };
+        std::cout << "Test took: " << testDurationInMilliseconds.count() << " nanoseconds \n";
 
+        const auto releaseStart{ std::chrono::high_resolution_clock::now() };
         Day<utility::InputVersion::release> releaseVersion;
         releaseVersion.Perform(utility::Part::both);
+        const auto releaseEnd{ std::chrono::high_resolution_clock::now() };
+        std::chrono::nanoseconds releaseDurationInMilliseconds{ releaseEnd - releaseStart };
+        std::cout << "Release took: " << releaseDurationInMilliseconds.count() << " nanoseconds\n";
+
     };
 };

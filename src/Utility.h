@@ -9,6 +9,7 @@
 #include <ranges>
 #include <iostream>
 #include <unordered_map>
+#include <regex>
 
 class AbstractDay;
 
@@ -21,7 +22,8 @@ namespace utility
     };
 
     template<typename T>
-    concept IsInt32Range = requires(T) {
+    concept IsInt32Range = requires(T)
+    {
         std::ranges::input_range<T>&& std::convertible_to<std::remove_cvref_t<std::remove_pointer_t<std::ranges::range_value_t<T>>>, int32_t>;
     };
 
@@ -30,6 +32,47 @@ namespace utility
     {
         std::derived_from<T, AbstractDay>;
         std::same_as<std::remove_cvref_t<decltype(T::sDay)>, std::string_view>;
+    };
+
+    template<typename T>
+    concept Integral = requires(T)
+    {
+        std::is_integral_v<T>;
+    };
+
+    template<typename T>
+    concept SignedIntegral = requires(T)
+    {
+        Integral<T>;
+        std::is_signed_v<T>;
+    };
+
+    template<typename T>
+    concept UnsignedIntegral = requires(T)
+    {
+        Integral<T>;
+        !SignedIntegral<T>;
+    };
+
+    template<typename T>
+    concept IsIntegralRange = requires(T)
+    {
+        std::ranges::input_range<T>;
+        Integral<std::remove_cvref_t<std::remove_pointer_t<std::ranges::range_value_t<T>>>>;
+    };
+
+    template<typename T>
+    concept IsSignedIntegralRange = requires(T)
+    {
+        std::ranges::input_range<T>;
+        SignedIntegral<std::remove_cvref_t<std::remove_pointer_t<std::ranges::range_value_t<T>>>>;
+    };
+
+    template<typename T>
+    concept IsUnsignedIntegralRange = requires(T)
+    {
+        std::ranges::input_range<T>;
+        UnsignedIntegral<std::remove_cvref_t<std::remove_pointer_t<std::ranges::range_value_t<T>>>>;
     };
 
     constexpr std::string_view sReleaseFileName{ "input.txt" };
@@ -66,7 +109,7 @@ namespace utility
     class InputReader
     {
     public:
-        std::string Read() const
+        [[nodiscard]] std::string Read() const
         {
             std::filesystem::path path{ INPUT_DIR };
             path.append(T::sDay);
@@ -97,7 +140,7 @@ namespace utility
         };
     };
 
-    std::vector<std::string_view> GetStringSplitBy(const std::string& inputString, std::string_view delimiter = "\n")
+    [[nodiscard]] std::vector<std::string_view> GetStringSplitBy(const std::string& inputString, std::string_view delimiter = "\n")
     {
         std::vector<std::string_view> result{};
         for (const auto& splitElement : std::ranges::views::split(inputString, delimiter))
@@ -108,9 +151,10 @@ namespace utility
         return result;
     }
 
-    int32_t ToNumber(std::string_view inputData)
+    template<Integral T = int32_t>
+    [[nodiscard]] T ToNumber(std::string_view inputData)
     {
-        int32_t result{};
+        T result{};
         for (const char c : inputData)
         {
             if (c < '0' || c > '9')
@@ -119,8 +163,28 @@ namespace utility
                 break;
             }
             result *= 10;
-            result += static_cast<int32_t>(c & 0x0F);
+            result += static_cast<T>(c & 0x0F);
         }
+        return result;
+    }
+
+    template<Integral T = int32_t>
+    [[nodiscard]] std::vector<T> GetNumbers(std::string_view data)
+    {
+        constexpr std::string_view sMatchExpression{ "\\d{1,}" };
+        std::regex baseRegex{ sMatchExpression.data() };
+
+        std::regex_token_iterator<std::string_view::iterator> endSentinelIterator;
+        std::regex_token_iterator<std::string_view::iterator> matchIterator{ data.begin(), data.end(), baseRegex };
+
+        std::vector<T> result;
+        result.reserve(2);
+        while (matchIterator != endSentinelIterator)
+        {
+            result.emplace_back(utility::ToNumber(std::string_view{ matchIterator->first, matchIterator->second }));
+            matchIterator++;
+        }
+
         return result;
     }
 

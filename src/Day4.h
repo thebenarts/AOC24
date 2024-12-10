@@ -32,17 +32,6 @@ private:
     using DirectionData = std::pair<int32_t, int32_t>;
     using Direction = day4::helper::Direction;
 
-    const std::unordered_map<Direction, int32_t> mHorizontalDirections
-    {
-        {Direction::left,   -1},
-        {Direction::right,  1},
-    };
-    const std::unordered_map<Direction, int32_t> mVerticalDirections
-    {
-        {Direction::up,     -1},
-        {Direction::down,   1},
-    };
-
     const std::unordered_map<Direction, DirectionData> mDirectionsMap
     {
         {Direction::left,   {0,-1} },

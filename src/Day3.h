@@ -4,28 +4,6 @@
 #include "Day.h"
 #include <regex>
 
-namespace day3::helper
-{
-    std::vector<int32_t> GetNumbers(std::string_view data)
-    {
-        constexpr std::string_view sMatchExpression{ "\\d{1,}" };
-        std::regex baseRegex{ sMatchExpression.data() };
-
-        std::regex_token_iterator<std::string_view::iterator> endSentinelIterator;
-        std::regex_token_iterator<std::string_view::iterator> matchIterator{ data.begin(), data.end(), baseRegex };
-
-        std::vector<int32_t> result;
-        result.reserve(2);
-        while (matchIterator != endSentinelIterator)
-        {
-            result.emplace_back(utility::ToNumber(std::string_view{ matchIterator->first, matchIterator->second }));
-            matchIterator++;
-        }
-
-        return result;
-    }
-}
-
 template<utility::InputVersion version = utility::InputVersion::release>
 class Day3 : public DayBase<version>
 {
@@ -109,7 +87,7 @@ private:
         {
             if (instructionType == Instruction::mul)
             {
-                result += MultiplyNumbers(day3::helper::GetNumbers(match));
+                result += MultiplyNumbers(utility::GetNumbers(match));
             }
         }
         utility::PrintDetails(version, utility::Part::first);
@@ -136,7 +114,7 @@ private:
             {
                 if (enabled)
                 {
-                    result += MultiplyNumbers(day3::helper::GetNumbers(match));
+                    result += MultiplyNumbers(utility::GetNumbers(match));
                 }
             } break;
             }
