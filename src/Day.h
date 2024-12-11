@@ -50,15 +50,15 @@ class DayWrapper
 public:
     void Perform()
     {
-        const auto testStart{ std::chrono::high_resolution_clock::now() };
         Day<utility::InputVersion::test> testVersion;
+        const auto testStart{ std::chrono::high_resolution_clock::now() };
         testVersion.Perform(utility::Part::both);
         const auto testEnd{ std::chrono::high_resolution_clock::now() };
         std::chrono::nanoseconds testDurationInMilliseconds{ testEnd - testStart };
         std::cout << "Test took: " << testDurationInMilliseconds.count() << " nanoseconds \n";
 
-        const auto releaseStart{ std::chrono::high_resolution_clock::now() };
         Day<utility::InputVersion::release> releaseVersion;
+        const auto releaseStart{ std::chrono::high_resolution_clock::now() };
         releaseVersion.Perform(utility::Part::both);
         const auto releaseEnd{ std::chrono::high_resolution_clock::now() };
         std::chrono::nanoseconds releaseDurationInMilliseconds{ releaseEnd - releaseStart };

@@ -16,7 +16,8 @@ int main()
     //d3.Perform();
     //DayWrapper<Day4> d4;
     //d4.Perform();
-    
-    DayWrapper<Day5> d5;
-    d5.Perform();
+    //DayWrapper<Day5> d5;
+    //d5.Perform();
+    DayWrapper<Day6> d6;
+    d6.Perform();
 }

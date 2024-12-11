@@ -10,6 +10,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <regex>
+#include <type_traits>
 
 class AbstractDay;
 
@@ -74,6 +75,25 @@ namespace utility
         std::ranges::input_range<T>;
         UnsignedIntegral<std::remove_cvref_t<std::remove_pointer_t<std::ranges::range_value_t<T>>>>;
     };
+
+    template<typename T>
+    concept IsMultiDimensionalRandomAccessRange = requires(T)
+    {
+        std::ranges::random_access_range<T>;
+        std::ranges::random_access_range<typename std::ranges::range_value_t<T>>;
+    };
+
+    template<IsMultiDimensionalRandomAccessRange T>
+    void PrintElements(T&& vec)
+    {
+        for (const auto& row : vec)
+        {
+            for (const auto& element : row)
+            {
+                std::cout << element << '\n';
+            }
+        }
+    }
 
     constexpr std::string_view sReleaseFileName{ "input.txt" };
     constexpr std::string_view sTestFileName{ "test.txt" };
