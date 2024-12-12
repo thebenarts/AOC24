@@ -391,7 +391,6 @@ private:
             worker.join();
         }
 
-
         utility::PrintDetails(version, utility::Part::second);
         std::cout << result.load(std::memory_order_acquire) << '\n';
     };

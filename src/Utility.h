@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <regex>
 #include <type_traits>
+#include <functional>
 
 class AbstractDay;
 
@@ -83,6 +84,36 @@ namespace utility
         std::ranges::random_access_range<typename std::ranges::range_value_t<T>>;
     };
 
+    template<typename T>
+    concept IsIntegralOperatorFunction = requires(T)
+    {
+        Integral<typename T::result_type>;
+        std::is_convertible_v<T, std::function<typename T::result_type(typename T::result_type, typename T::result_type)>>;
+    };
+
+    template<typename T>
+    concept IsIntegralOperatorFunctionRange = requires(T)
+    {
+        std::ranges::input_range<T>;
+        IsIntegralOperatorFunction<std::ranges::range_value_t<T>>;
+    };
+
+    template<typename T>
+    concept IsMultiDimensionalOperatorFunctionRange = requires(T)
+    {
+        std::ranges::input_range<T>;
+        IsIntegralOperatorFunctionRange<std::ranges::range_value_t<T>>;
+    };
+
+    // This is probably screwed up.
+    template<typename T, typename ...Args>
+    concept IsVariadicIntegralOperatorFunction = requires(T, Args...)
+    {
+        sizeof ... (Args) > 0;
+        Integral<T>;
+        (std::is_convertible_v<Args, std::function<T(T, T)>> && ...);
+    };
+
     template<IsMultiDimensionalRandomAccessRange T>
     void PrintElements(T&& vec)
     {
@@ -95,8 +126,48 @@ namespace utility
         }
     }
 
+    template<Integral T>
+    std::function<T(T, T)> ConvertIntegralCFunctionPointer(T(*func)(T, T))
+    {
+        return std::function<T(T, T)>{func};
+    }
+
     constexpr std::string_view sReleaseFileName{ "input.txt" };
     constexpr std::string_view sTestFileName{ "test.txt" };
+
+    template<utility::Integral T>
+    T GetNumberOfDigits(T number)
+    {
+        T result{ 1 };
+        while (number /= 10)
+        {
+            result++;
+        }
+
+        return result;
+    }
+
+
+    template<utility::Integral T>
+    T Sum(T element1, T element2)
+    {
+        return element1 + element2;
+    }
+
+    template<utility::Integral T>
+    T Product(T element1, T element2)
+    {
+        return element1 * element2;
+    }
+
+    template<utility::Integral T>
+    T Concatenate(T element1, T element2)
+    {
+        std::string num1{ std::to_string(element1) };
+        num1.append(std::to_string(element2));
+
+        return ToNumber<T>(num1);
+    }
 
     enum class Part
     {
@@ -201,7 +272,7 @@ namespace utility
         result.reserve(2);
         while (matchIterator != endSentinelIterator)
         {
-            result.emplace_back(utility::ToNumber(std::string_view{ matchIterator->first, matchIterator->second }));
+            result.emplace_back(utility::ToNumber<T>(std::string_view{ matchIterator->first, matchIterator->second }));
             matchIterator++;
         }
 
