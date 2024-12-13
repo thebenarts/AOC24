@@ -95,8 +95,8 @@ private:
         using namespace std::literals;
         utility::InputReader<Day7, version> inputReader;
         mBuffer = inputReader.Read();
-        for (const auto [index, rowInput] : mBuffer | std::ranges::views::split("\n"sv)
-            | std::ranges::views::transform([](auto&& range) {return std::string_view{ range }; }) | std::ranges::views::enumerate)
+        for (const auto rowInput : mBuffer | std::ranges::views::split("\n"sv)
+            | std::ranges::views::transform([](auto&& range) {return std::string_view{ range }; }))
         {
             mData.push_back(utility::GetNumbers<Number>(rowInput));
             assert(mData.back().size() > 2);
@@ -142,7 +142,6 @@ private:
 
     void PerformSecond() override
     {
-        utility::PrintDetails(version, utility::Part::second);
         std::vector<std::thread> workers;
         workers.reserve(mNumberofOperandsNeeded.size());
         ScratchData scratchData;

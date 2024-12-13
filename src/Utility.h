@@ -283,4 +283,114 @@ namespace utility
     {
         std::cout << "[Version]: " << sInputVersionStringMap.at(version) << " [Part]: " << sPartStringMap.at(part) << " Result: ";
     }
+
+    template<Integral T = int32_t>
+    struct Position
+    {
+        using PositionType = T;
+        union
+        {
+            PositionType mRow{};  // vertical
+            PositionType mY;    // vertical
+        };
+        union
+        {
+            PositionType mCol{};  // horizontal
+            PositionType mX;    // horizontal
+        };
+
+        auto operator<=>(const Position& other) const
+        {
+            if (auto cmp{ mRow <=> other.mRow }; cmp != 0)
+            {
+                return cmp;
+            }
+            return mCol <=> other.mCol;
+        }
+        bool operator==(const Position& other) const
+        {
+            return mRow == other.mRow && mCol == other.mCol;
+        }
+
+        Position operator-(const Position& otherPosition)
+        {
+            return { this->mRow - otherPosition.mRow, this->mCol - otherPosition.mCol };
+        }
+
+        Position operator+(const Position& otherPosition)
+        {
+            return { this->mRow + otherPosition.mRow, this->mCol + otherPosition.mCol };
+        }
+
+        Position operator*(const Position& otherPosition)
+        {
+            return { this->mRow * otherPosition.mRow, this->mCol * otherPosition.mCol };
+        }
+
+        Position operator/(const Position& otherPosition)
+        {
+            return { this->mRow / otherPosition.mRow, this->mCol / otherPosition.mCol };
+        }
+
+        Position& operator-=(const Position& otherPosition)
+        {
+            this->mRow -= otherPosition.mRow;
+            this->mCol -= otherPosition.mCol;
+            return *this;
+        }
+
+        template<Integral U = T>
+        Position& operator-=(U scalar)
+        {
+            this->mRow -= scalar;
+            this->mCol -= scalar;
+            return *this;
+        }
+
+        Position& operator+=(const Position& otherPosition)
+        {
+            this->mRow += otherPosition.mRow;
+            this->mCol += otherPosition.mCol;
+            return *this;
+        }
+
+        template<Integral U = T>
+        Position& operator+=(U scalar)
+        {
+            this->mRow += scalar;
+            this->mCol += scalar;
+            return *this;
+        }
+
+        Position& operator*=(const Position& otherPosition)
+        {
+            this->mRow *= otherPosition.mRow;
+            this->mCol *= otherPosition.mCol;
+            return *this;
+        }
+
+        template<Integral U = T>
+        Position& operator*=(U scalar)
+        {
+            this->mRow *= scalar;
+            this->mCol *= scalar;
+            return *this;
+        }
+
+        Position& operator/=(const Position& otherPosition)
+        {
+            this->mRow /= otherPosition.mRow;
+            this->mCol /= otherPosition.mCol;
+            return *this;
+        }
+
+        template<Integral U = T>
+        Position& operator/=(U scalar)
+        {
+            this->mRow /= scalar;
+            this->mCol /= scalar;
+            return *this;
+        }
+    };
+
 }
