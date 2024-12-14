@@ -169,6 +169,12 @@ namespace utility
         return ToNumber<T>(num1);
     }
 
+    template<typename... T>
+    struct Overload : T...
+    {
+        using T::operator()...;
+    };
+
     enum class Part
     {
         first,
@@ -240,6 +246,17 @@ namespace utility
         }
 
         return result;
+    }
+
+    template<Integral T = int32_t>
+    [[nodiscard]] T ToNumber(char inputData)
+    {
+        if (inputData < '0' || inputData > '9')
+        {
+            assert(false);
+        }
+
+        return static_cast<T>(inputData & 0x0F);
     }
 
     template<Integral T = int32_t>
@@ -392,5 +409,4 @@ namespace utility
             return *this;
         }
     };
-
 }

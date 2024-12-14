@@ -7,6 +7,7 @@
 #include "Day6.h"
 #include "Day7.h"
 #include "Day8.h"
+#include "Day9.h"
 
 int main()
 {
@@ -24,6 +25,8 @@ int main()
     //d6.Perform();
     //DayWrapper<Day7> d7;
     //d7.Perform();
-    DayWrapper<Day8> d8;
-    d8.Perform();
+    //DayWrapper<Day8> d8;
+    //d8.Perform();
+    DayWrapper<Day9> d9;
+    d9.Perform();
 }
