@@ -12,6 +12,8 @@
 #include <regex>
 #include <type_traits>
 #include <functional>
+#include <cstdint>
+#include <expected>
 
 class AbstractDay;
 
@@ -201,7 +203,6 @@ namespace utility
         {Part::both, "Both"}
     };
 
-
     template<IsDayAndHasDayString T, InputVersion sInputVersion = InputVersion::release>
     class InputReader
     {
@@ -349,6 +350,30 @@ namespace utility
             return { this->mRow / otherPosition.mRow, this->mCol / otherPosition.mCol };
         }
 
+        template<Integral U = T>
+        Position operator-(U scalar)
+        {
+            return { mRow - scalar, mCol - scalar };
+        }
+
+        template<Integral U = T>
+        Position operator+(U scalar)
+        {
+            return { mRow + scalar, mCol + scalar };
+        }
+
+        template<Integral U = T>
+        Position operator*(U scalar)
+        {
+            return { mRow * scalar, mCol * scalar };
+        }
+
+        template<Integral U = T>
+        Position operator/(U scalar)
+        {
+            return { mRow / scalar, mCol / scalar };
+        }
+
         Position& operator-=(const Position& otherPosition)
         {
             this->mRow -= otherPosition.mRow;
@@ -408,5 +433,73 @@ namespace utility
             this->mCol /= scalar;
             return *this;
         }
+    };
+
+    enum class ErrorType
+    {
+        outOfBounds,
+    };
+
+    template<utility::IsMultiDimensionalRandomAccessRange T>
+    struct TwoDimensionalVectorType
+    {
+        using type = std::remove_cvref_t<std::remove_pointer_t<std::ranges::range_value_t<std::remove_cvref_t<std::remove_pointer_t<std::ranges::range_value_t<T>>>>>>;
+        using pointer_type = type*;
+    };
+
+    template<utility::IsMultiDimensionalRandomAccessRange T, SignedIntegral U>
+    std::expected<typename TwoDimensionalVectorType<T>::pointer_type, ErrorType> GetItemAt(T&& vector, Position<U> position)
+    {
+        if (position.mRow < 0 || position.mRow >= vector.size() || position.mCol < 0 || position.mCol >= vector[position.mRow].size())
+        {
+            return std::unexpected{ ErrorType::outOfBounds };
+        }
+
+        return &vector[position.mRow][position.mCol];
+    }
+
+    enum class Direction
+    {
+        left,
+        right,
+        up,
+        down,
+        leftUp,
+        leftDown,
+        rightUp,
+        rightDown,
+    };
+
+    using DirectionData = utility::Position<int32_t>;
+    static const std::unordered_map<Direction, DirectionData> sBaseDirectionsMap
+    {
+        {Direction::left,   {0,-1} },
+        {Direction::right,  {0,1}},
+        {Direction::up,     {-1, 0}},
+        {Direction::down,   {1, 0}},
+    };
+
+    static const std::unordered_map<Direction, DirectionData> sFullDirectionsMap
+    {
+        {Direction::left,   {0,-1} },
+        {Direction::right,  {0,1}},
+        {Direction::up,     {-1, 0}},
+        {Direction::down,   {1, 0}},
+        {Direction::leftUp, {-1,-1}},
+        {Direction::leftDown, {1,-1}},
+        {Direction::rightDown, {1, 1}},
+        {Direction::rightUp, {-1,1}},
+    };
+
+    static constexpr std::array<std::pair<DirectionData, Direction>, 8> sFullReverseDirectionsArray
+    {
+        std::pair<DirectionData,Direction>{{0,-1},Direction::left },
+        {{0,1}, Direction::right},
+        {{-1, 0}, Direction::up},
+        {{1, 0}, Direction::down},
+        {{-1,-1}, Direction::leftUp},
+        {{1,-1}, Direction::leftDown},
+        {{1, 1}, Direction::rightDown},
+        {{-1,1}, Direction::rightUp},
     };
 }

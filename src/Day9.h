@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <variant>
 
+// Was really short on time so I didn't think much about the structure of it.
+
 template<utility::InputVersion version = utility::InputVersion::release>
 class Day9 : public DayBase<version>
 {
@@ -102,13 +104,9 @@ class Day9 : public DayBase<version>
         assert(migrateTo.size() == migrateFrom.size());
         for (auto [elementToMigrateTo, elementToMigrateFrom] : std::ranges::views::zip(migrateTo, migrateFrom))
         {
-            //if (IsEmptyField(elementToMigrateFrom))
-            //{
-            //    break;
-            //}
-
             std::swap(elementToMigrateTo, elementToMigrateFrom);
         }
+        // doesn't seem to work :( 
         //std::ranges::swap(migrateTo, migrateFrom);
     }
 
