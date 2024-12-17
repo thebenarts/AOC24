@@ -138,7 +138,7 @@ namespace utility
     constexpr std::string_view sTestFileName{ "test.txt" };
 
     template<utility::Integral T>
-    T GetNumberOfDigits(T number)
+    T GetNumberOfDigitsByDivision(T number)
     {
         T result{ 1 };
         while (number /= 10)
@@ -149,6 +149,24 @@ namespace utility
         return result;
     }
 
+    template<Integral T>
+    [[nodiscard]] T GetNumberOfDigitsByLog10(T number)
+    {
+        return std::log10(number) + 1;
+    }
+
+    template<Integral T>
+    [[nodiscard]] T GetNumberOfDigitsByString(T number)
+    {
+        auto numberString{ std::to_string(number) };
+        return numberString.length();
+    }
+
+    template<Integral T>
+    [[nodiscard]] T GetNumberOfDigits(T number)
+    {
+        return GetNumberOfDigitsByLog10(number);
+    }
 
     template<utility::Integral T>
     T Sum(T element1, T element2)

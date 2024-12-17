@@ -123,7 +123,6 @@ private:
         {
             result += scratchData.mFoundPeeks.size();
         }
-        utility::PrintDetails(version, utility::Part::first);
         std::cout << result << '\n';
         utility::PrintDetails(version, utility::Part::second);
     }
