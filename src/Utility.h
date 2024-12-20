@@ -281,6 +281,13 @@ namespace utility
     template<Integral T = int32_t>
     [[nodiscard]] T ToNumber(std::string_view inputData)
     {
+        bool isNegative{ false };
+        if (inputData.front() == '-')
+        {
+            isNegative = true;
+            inputData = inputData.substr(1);
+        }
+
         T result{};
         for (const char c : inputData)
         {
@@ -292,6 +299,12 @@ namespace utility
             result *= 10;
             result += static_cast<T>(c & 0x0F);
         }
+
+        if (isNegative)
+        {
+            result *= -1;
+        }
+
         return result;
     }
 
@@ -308,7 +321,15 @@ namespace utility
         result.reserve(2);
         while (matchIterator != endSentinelIterator)
         {
-            result.emplace_back(utility::ToNumber<T>(std::string_view{ matchIterator->first, matchIterator->second }));
+            if (matchIterator->first - 1 >= data.begin() && *(matchIterator->first - 1) == '-')
+            {
+                result.emplace_back(utility::ToNumber<T>(std::string_view{ matchIterator->first - 1, matchIterator->second }));
+            }
+            else
+            {
+                result.emplace_back(utility::ToNumber<T>(std::string_view{ matchIterator->first, matchIterator->second }));
+            }
+
             matchIterator++;
         }
 
@@ -317,7 +338,12 @@ namespace utility
 
     void PrintDetails(InputVersion version, Part part)
     {
-        std::cout << "[Version]: " << sInputVersionStringMap.at(version) << " [Part]: " << sPartStringMap.at(part) << " Result: ";
+        std::cout << "[Version]: " << "\033[7;1;31m" <<
+            sInputVersionStringMap.at(version) <<
+            "\033[0m" <<
+            " [Part]: " << "\033[7;1;31m" << sPartStringMap.at(part) <<
+            "\033[0m"
+            << " Result: ";
     }
 
     template<Integral T = int32_t>
@@ -369,25 +395,25 @@ namespace utility
         }
 
         template<Integral U = T>
-        Position operator-(U scalar)
+        Position operator-(U scalar) const
         {
             return { mRow - scalar, mCol - scalar };
         }
 
         template<Integral U = T>
-        Position operator+(U scalar)
+        Position operator+(U scalar) const
         {
             return { mRow + scalar, mCol + scalar };
         }
 
         template<Integral U = T>
-        Position operator*(U scalar)
+        Position operator*(U scalar) const
         {
             return { mRow * scalar, mCol * scalar };
         }
 
         template<Integral U = T>
-        Position operator/(U scalar)
+        Position operator/(U scalar) const
         {
             return { mRow / scalar, mCol / scalar };
         }
@@ -520,4 +546,12 @@ namespace utility
         {{1, 1}, Direction::rightDown},
         {{-1,1}, Direction::rightUp},
     };
+
+    template<typename... T>
+    void PrintResult(T&&... args)
+    {
+        std::cout << "\033[4;1;32m";
+        (std::cout << ... << std::forward<T>(args));
+        std::cout << '\n' << "\033[0m";
+    }
 }

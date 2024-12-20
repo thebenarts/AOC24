@@ -50,6 +50,8 @@ class DayWrapper
 public:
     void Perform()
     {
+        std::cout << Day<>::sDay << '\n';
+
         Day<utility::InputVersion::test> testVersion;
         const auto testStart{ std::chrono::high_resolution_clock::now() };
         testVersion.Perform(utility::Part::both);

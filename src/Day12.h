@@ -243,7 +243,7 @@ private:
         }
 
         utility::PrintDetails(version, utility::Part::first);
-        std::cout << result << '\n';
+        utility::PrintResult(result);
     }
 
     void PerformSecond() override
@@ -253,10 +253,11 @@ private:
         {
             const auto sides{ CalculatePlotSides(region) };
             result += region.mPositions.size() * sides;
-            std::cout << "Region: " << region.mPlotType << " Area: " << region.mPositions.size() << " Sides: " << sides << " = " << region.mPositions.size() * sides << '\n';
+            std::cout << "Region: " << region.mPlotType << " Area: " << region.mPositions.size() 
+                << " Sides: " << sides << " = " << region.mPositions.size() * sides << '\n';
         }
         utility::PrintDetails(version, utility::Part::second);
-        std::cout << result << '\n';
+        utility::PrintResult(result);
     }
 
 private:
