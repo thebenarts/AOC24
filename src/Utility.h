@@ -547,6 +547,63 @@ namespace utility
         {{-1,1}, Direction::rightUp},
     };
 
+    static constexpr std::array<Direction, 4> sBaseDirectionOrder{ Direction::up, Direction::right, Direction::down, Direction::left };
+    static constexpr std::array<Position<int32_t>, 4> sBaseDirectionValuesInOrder{
+        Position<int32_t>{.mRow = -1, .mCol = 0},
+        Position<int32_t>{.mRow = 0, .mCol = 1},
+        Position<int32_t>{.mRow = 1, .mCol = 0},
+        Position<int32_t>{.mRow = 0, .mCol = -1} };
+
+    static constexpr size_t GetDirectionIndex(Direction direction)
+    {
+        const auto directionIterator{ std::ranges::find(sBaseDirectionOrder,direction) };
+        if (directionIterator == sBaseDirectionOrder.end())
+        {
+            assert(false);
+            return 0;
+        }
+
+        return std::distance(sBaseDirectionOrder.begin(), directionIterator);
+    }
+
+    static constexpr size_t GetNextDirectionIndex(Direction direction)
+    {
+        return (GetDirectionIndex(direction) + 1) % sBaseDirectionOrder.size();
+    }
+
+    static constexpr Direction GetNextDirection(Direction direction)
+    {
+        return sBaseDirectionOrder[GetNextDirectionIndex(direction)];
+    }
+
+    static_assert(GetNextDirection(Direction::up) == Direction::right);
+    static_assert(GetNextDirection(Direction::right) == Direction::down);
+    static_assert(GetNextDirection(Direction::down) == Direction::left);
+    static_assert(GetNextDirection(Direction::left) == Direction::up);
+
+    template<SignedIntegral T>
+    static constexpr Position<T> GetDirectionValue(Direction direction)
+    {
+        return sBaseDirectionValuesInOrder[GetDirectionIndex(direction)];
+    }
+
+    template<SignedIntegral T>
+    static constexpr Position<T> GetNextDirectionValue(Direction direction)
+    {
+        return sBaseDirectionValuesInOrder[GetNextDirectionIndex(direction)];
+    }
+
+    DirectionData GetDirectionData(Direction direction)
+    {
+        if (auto directionIterator{ sFullDirectionsMap.find(direction) }; directionIterator != sFullDirectionsMap.end())
+        {
+            return directionIterator->second;
+        }
+
+        assert(false);
+        return {};
+    }
+
     template<typename... T>
     void PrintResult(T&&... args)
     {
